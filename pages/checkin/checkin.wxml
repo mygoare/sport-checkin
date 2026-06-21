@@ -1,0 +1,69 @@
+<!-- pages/checkin/checkin.wxml -->
+<view class="page">
+
+  <!-- Nav Bar -->
+  <view class="nav-bar">
+    <view class="nav-back" bindtap="onBackTap">
+      <text>←</text>
+    </view>
+    <text class="nav-title">记录运动</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <!-- User display -->
+  <view class="user-strip" wx:if="{{userInfo}}">
+    <image class="strip-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+    <text class="strip-name">{{userInfo.nickName}}</text>
+    <text class="strip-hint">正在记录今日运动</text>
+  </view>
+
+  <!-- Preset Grid -->
+    <view class="section-label">快速选择</view>
+    <scroll-view class="preset-scroll" scroll-x="false">
+      <view class="preset-grid">
+        <view
+          class="preset-item {{selectedPreset === index ? 'preset-selected' : ''}}"
+          wx:for="{{presets}}"
+          wx:key="label"
+          bindtap="onPresetTap"
+          data-idx="{{index}}"
+        >
+          <text class="preset-icon">{{item.icon}}</text>
+          <text class="preset-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <block wx:if="{{showCheckinDetail}}">
+      <!-- Content Input -->
+      <view class="section-label">运动详情</view>
+      <view class="input-card">
+        <textarea
+          class="content-input"
+          value="{{content}}"
+          placeholder="描述你今天的运动，例如：爬山6公里、健身房3小时、引体向上20个..."
+          placeholder-class="input-placeholder"
+          bindinput="onContentInput"
+          maxlength="{{maxChars}}"
+          auto-height
+          show-confirm-bar="{{false}}"
+        ></textarea>
+        <view class="input-footer">
+          <view class="char-count">{{charCount}}/{{maxChars}}</view>
+          <view class="clear-btn" bindtap="onClearContent" wx:if="{{content}}">清空</view>
+        </view>
+      </view>
+    </block>
+
+  <!-- Submit Button -->
+  <view class="submit-area">
+    <view
+      class="submit-btn {{isSubmitting ? 'btn-submitting' : ''}}"
+      bindtap="onSubmit"
+    >
+      <text wx:if="{{!isSubmitting}}">完成打卡</text>
+      <text wx:else>提交中...</text>
+    </view>
+  </view>
+
+</view>

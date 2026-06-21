@@ -1,0 +1,34 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/checkin/checkin",
+    "pages/history/history"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "navigationBarTitleText": "运动打卡",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f0f4ff"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#65a30d",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "今日打卡"
+      },
+      {
+        "pagePath": "pages/history/history",
+        "text": "打卡动态"
+
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

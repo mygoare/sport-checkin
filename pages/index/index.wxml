@@ -1,0 +1,134 @@
+<!-- pages/index/index.wxml -->
+<view class="container">
+
+<!-- Header -->
+<view class="header">
+  <view class="header-bg"></view>
+  <view class="header-content">
+    <view class="date-label">{{todayDisplay}}</view>
+    <view class="header-title">今日运动打卡</view>
+    <view class="header-subtitle">坚持运动，活出健康人生</view>
+  </view>
+  <view class="deco-circle deco-1"></view>
+  <view class="deco-circle deco-2"></view>
+  <view class="deco-circle deco-3"></view>
+</view>
+
+<!-- User Card（已登录） -->
+<view class="user-card" wx:if="{{hasLogin}}">
+  <view class="user-info-row">
+    <image class="user-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+    <view class="user-meta">
+      <view class="user-name">{{userInfo.nickName}}</view>
+      <view class="user-status {{hasCheckedIn ? 'status-done' : 'status-pending'}}">
+        <text wx:if="{{hasCheckedIn}}">✅ 今日已打卡</text>
+        <text wx:else>⏰ 还未打卡</text>
+      </view>
+    </view>
+    <view class="streak-badge" wx:if="{{hasCheckedIn}}">
+      <text class="streak-icon">🔥</text>
+    </view>
+  </view>
+  <view class="checkin-btn btn-active" bindtap="onCheckinTap">
+    <text wx:if="{{!hasCheckedIn}}">💪 立即打卡</text>
+    <text wx:else>💪 再次打卡</text>
+  </view>
+</view>
+
+<!-- Today's Checkins -->
+<view class="section">
+  <view class="section-header">
+    <text class="section-title">今日动态</text>
+    <text class="section-count">{{todayUniqueCount}}人打卡</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty-state">
+    <text class="empty-text">加载中...</text>
+  </view>
+  <view wx:elif="{{todayCheckins.length === 0}}" class="empty-state">
+    <text class="empty-icon">🌅</text>
+    <text class="empty-text">今天还没有人打卡，快来第一个！</text>
+  </view>
+  <view wx:else class="checkin-list">
+    <view class="checkin-item" wx:for="{{todayCheckins}}" wx:key="id">
+      <image class="item-avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+      <view class="item-body">
+        <view class="item-header-row">
+          <text class="item-name">{{item.nickName}}</text>
+          <text class="item-time">{{item.time}}</text>
+        </view>
+        <view class="item-content">{{item.content}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 未登录：参与打卡按钮 -->
+  <view wx:if="{{!hasLogin && !showSetup}}" class="join-btn" bindtap="onJoinTap">
+    🙋 我也要参与打卡
+  </view>
+</view>
+
+<!-- Profile Setup（点击参与后展开） -->
+<view class="setup-card" wx:if="{{!hasLogin && showSetup}}">
+  <view class="setup-prompt">
+    <!-- Step indicator -->
+    <view class="setup-steps">
+      <view class="setup-step {{tempAvatarUrl ? 'step-done' : 'step-active'}}">
+        <view class="step-dot">{{tempAvatarUrl ? '✓' : '1'}}</view>
+        <text class="step-label">选头像</text>
+      </view>
+      <view class="step-line"></view>
+      <view class="setup-step {{tempAvatarUrl && tempNickName ? 'step-done' : tempAvatarUrl ? 'step-active' : 'step-idle'}}">
+        <view class="step-dot">{{tempAvatarUrl && tempNickName ? '✓' : '2'}}</view>
+        <text class="step-label">填昵称</text>
+      </view>
+      <view class="step-line"></view>
+      <view class="setup-step {{tempAvatarUrl && tempNickName ? 'step-active' : 'step-idle'}}">
+        <view class="step-dot">3</view>
+        <text class="step-label">开始打卡</text>
+      </view>
+    </view>
+
+    <view class="setup-welcome">
+      <text class="setup-title">👋 欢迎加入</text>
+      <text class="setup-subtitle">先设置你的打卡身份，让大家认识你</text>
+    </view>
+
+    <view class="setup-avatar-wrap">
+      <button class="avatar-picker-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image wx:if="{{tempAvatarUrl}}" class="setup-avatar avatar-set"
+          src="{{tempAvatarUrl}}" mode="aspectFill"></image>
+        <view wx:else class="setup-avatar avatar-empty">
+          <text class="avatar-empty-icon">🙂</text>
+          <text class="avatar-empty-hint">点击选择</text>
+        </view>
+        <view class="avatar-edit-badge">📷</view>
+      </button>
+      <view class="avatar-hint-text">
+        <text wx:if="{{tempAvatarUrl}}" class="hint-done">✅ 头像已选好</text>
+        <text wx:else class="hint-pending">点击头像 → 选择微信头像</text>
+      </view>
+    </view>
+
+    <view class="nickname-wrap">
+      <view class="nickname-label">你的昵称</view>
+      <view class="nickname-input-box {{tempNickName ? 'input-filled' : ''}}">
+        <text class="nickname-icon">✏️</text>
+        <input class="nickname-input" type="text" value="{{tempNickName}}"
+          placeholder="给自己起个名字吧" placeholder-class="nickname-placeholder"
+          bindinput="onNickNameInput" bindblur="onNickNameBlur" maxlength="20" />
+        <text class="nickname-count">{{tempNickName.length}}/20</text>
+      </view>
+    </view>
+
+    <view class="save-btn {{tempAvatarUrl && tempNickName ? 'save-btn-active' : 'save-btn-disabled'}}"
+      bindtap="onSaveProfile">
+      <text wx:if="{{tempAvatarUrl && tempNickName}}">🚀 完成设置，开始打卡</text>
+      <text wx:else>请先完成上方设置</text>
+    </view>
+
+    <view class="setup-tip">头像和昵称仅用于打卡展示，不会上传至任何服务器</view>
+  </view>
+</view>
+
+</view>
