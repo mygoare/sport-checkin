@@ -379,6 +379,7 @@ async function main() {
 
   const { svg, H } = buildSvg(stats, monday, sunday, dateStr, title, dataSourceLabel, avatarMap);
 
+  fs.mkdirSync(path.dirname(output), { recursive: true });
   await sharp(Buffer.from(svg)).png().toFile(output);
   console.log(`✅ 周报图片已生成: ${output}（${1080}x${H}）`);
 }
