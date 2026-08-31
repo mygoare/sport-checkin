@@ -78,3 +78,8 @@ checkins
   "timestamp": 1705300000000
 }
 ```
+
+
+
+周报功能：
+bun run report

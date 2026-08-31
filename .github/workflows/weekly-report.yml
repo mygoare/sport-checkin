@@ -1,0 +1,49 @@
+name: 运动打卡周报
+
+on:
+  schedule:
+    # 每周一 09:00 (北京时间) = 01:00 UTC
+    - cron: '0 1 * * 1'
+  workflow_dispatch: # 支持在 Actions 页面手动触发
+
+permissions:
+  contents: read
+
+jobs:
+  weekly-report:
+    runs-on: ubuntu-latest
+    env:
+      WX_APPID: ${{ secrets.WX_APPID }}
+      WX_APPSECRET: ${{ secrets.WX_APPSECRET }}
+      WX_ENV: ${{ secrets.WX_ENV }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 安装中文字体（避免中文渲染成方框）
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
+
+      - name: 安装依赖
+        working-directory: weekly-report
+        run: npm install
+
+      - name: 生成周报
+        working-directory: weekly-report
+        run: |
+          # 固定取“上周日”，保证周报始终是上一个完整自然周（周一到周日）
+          REPORT_DATE=$(date -d "last sunday" +%F)
+          echo "周报日期锚点: $REPORT_DATE"
+          node generate.js --source cloud --date "$REPORT_DATE"
+
+      - name: 上传周报图片
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-report
+          path: weekly-report/output/*.png
+          retention-days: 30
+          if-no-files-found: error

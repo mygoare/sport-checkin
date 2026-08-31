@@ -1,1 +1,8 @@
 pages/.DS_Store
+.DS_Store
+
+# weekly-report 脚本
+weekly-report/node_modules/
+weekly-report/output/
+weekly-report/cloud-config.json
+

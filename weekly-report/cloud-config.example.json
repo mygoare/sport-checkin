@@ -1,0 +1,5 @@
+{
+  "appid": "你的小程序 AppID",
+  "secret": "你的小程序 AppSecret",
+  "env": "cloud1-xxxxxxxxxxxxxx"
+}

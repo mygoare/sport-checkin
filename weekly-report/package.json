@@ -1,0 +1,12 @@
+{
+  "name": "sport-checkin-weekly-report",
+  "version": "1.0.0",
+  "private": true,
+  "description": "运动打卡周报图片生成脚本（数据从微信云开发控制台导出）",
+  "scripts": {
+    "report": "node generate.js"
+  },
+  "dependencies": {
+    "sharp": "^0.33.5"
+  }
+}
