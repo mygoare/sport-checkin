@@ -18,10 +18,10 @@ jobs:
       WX_ENV: ${{ secrets.WX_ENV }}
     steps:
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 设置 Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 20
 
@@ -41,7 +41,7 @@ jobs:
           node generate.js --source cloud --date "$REPORT_DATE"
 
       - name: 上传周报图片
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: weekly-report
           path: weekly-report/output/*.png
