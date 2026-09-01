@@ -65,9 +65,10 @@ jobs:
         run: |
           PNG=$(ls weekly-report/output/*.png | head -1)
           TITLE=$(basename "$PNG")
-          # 用 blob URL + URL 编码，避免相对路径/中文文件名解析失败
+          # 用 raw.githubusercontent.com 原图地址 + commit SHA，保证是图片而非 web 页面
           ENC=$(jq -rn --arg v "$TITLE" '$v|@uri')
-          IMG_URL="https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/reports/${ENC}"
+          SHA=$(git rev-parse HEAD)
+          IMG_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${SHA}/reports/${ENC}"
           BODY="![周报](${IMG_URL})"
           echo "图片地址: $IMG_URL"
           EXISTING=$(gh issue list --state all --search "in:title \"$TITLE\"" --json number --jq '.[0].number' 2>/dev/null)
