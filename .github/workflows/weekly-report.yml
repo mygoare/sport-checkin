@@ -7,7 +7,8 @@ on:
   workflow_dispatch: # 支持在 Actions 页面手动触发
 
 permissions:
-  contents: read
+  contents: write
+  issues: write
 
 jobs:
   weekly-report:
@@ -47,3 +48,28 @@ jobs:
           path: weekly-report/output/*.png
           retention-days: 30
           if-no-files-found: error
+
+      - name: 提交周报图片到仓库 reports/ 目录
+        run: |
+          mkdir -p reports
+          cp weekly-report/output/*.png reports/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports
+          git commit -m "发布周报图片" || echo "无需提交"
+          git push
+
+      - name: 创建周报 Issue（标题 = 图片文件名）
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PNG=$(ls weekly-report/output/*.png | head -1)
+          TITLE=$(basename "$PNG")
+          BODY="![周报](reports/$(basename "$PNG"))"
+          EXISTING=$(gh issue list --state all --search "in:title \"$TITLE\"" --json number --jq '.[0].number' 2>/dev/null)
+          if [ -n "$EXISTING" ]; then
+            gh issue edit "$EXISTING" --body "$BODY"
+            echo "已更新已有 Issue #$EXISTING"
+          else
+            gh issue create --title "$TITLE" --body "$BODY"
+          fi
