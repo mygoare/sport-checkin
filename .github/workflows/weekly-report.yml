@@ -65,7 +65,11 @@ jobs:
         run: |
           PNG=$(ls weekly-report/output/*.png | head -1)
           TITLE=$(basename "$PNG")
-          BODY="![周报](reports/$(basename "$PNG"))"
+          # 用 blob URL + URL 编码，避免相对路径/中文文件名解析失败
+          ENC=$(jq -rn --arg v "$TITLE" '$v|@uri')
+          IMG_URL="https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/reports/${ENC}"
+          BODY="![周报](${IMG_URL})"
+          echo "图片地址: $IMG_URL"
           EXISTING=$(gh issue list --state all --search "in:title \"$TITLE\"" --json number --jq '.[0].number' 2>/dev/null)
           if [ -n "$EXISTING" ]; then
             gh issue edit "$EXISTING" --body "$BODY"
