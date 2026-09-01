@@ -1,4 +1,6 @@
 // app.js
+const config = require('./config.js');
+
 App({
   globalData: {
     userInfo: null,
@@ -10,7 +12,7 @@ App({
 
   onLaunch() {
     wx.cloud.init({
-      env: 'YOUR_CLOUD_ENV_ID',   // ← 改成你自己的环境 ID
+      env: config.CLOUD_ENV_ID,   // 环境 ID 在 config.js 里配置
       traceUser: false,
     });
     this.globalData.cloudReady = true;
